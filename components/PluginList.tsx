@@ -14,7 +14,7 @@ import Plugins, { PluginMeta } from "~plugins";
 import { PartialOrNot, PartialPlugin, PLUGINS_STORE_KEY } from "../shared";
 import PluginItem from "./PluginItem";
 
-const Native = VencordNative.pluginHelpers.UnofficialPluginInstaller as PluginNative<typeof import("../native")>;
+const Native = VencordNative.pluginHelpers.UnofficialPluginManager as PluginNative<typeof import("../native")>;
 
 interface Plugin {
     name: string;
@@ -99,7 +99,7 @@ export default function PluginList({
 
                 const mapPlugin = (p: any, isPartial = false): Plugin => {
                     const folderName = isPartial ? p.folderName : (
-                        p.name === "UnofficialPluginInstaller" ? folderMap[p.name] :
+                        p.name === "UnofficialPluginManager" ? folderMap[p.name] :
                             PluginMeta[p.name]?.userPlugin ? PluginMeta[p.name].folderName.replace("\\", "/").split("/").pop() :
                                 folderMap[p.name]
                     );

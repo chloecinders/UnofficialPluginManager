@@ -26,7 +26,7 @@ import SettingsPlugin from "plugins/_core/settings";
 import UnofficialPluginsSection from "./components/UnofficialPluginsSection";
 
 export default definePlugin({
-    name: "UnofficialPluginInstaller",
+    name: "UnofficialPluginManager",
     description: "Allows you to easily install and manage custom plugins",
     authors: [Devs.surgedevs],
     startAt: StartAt.Init,

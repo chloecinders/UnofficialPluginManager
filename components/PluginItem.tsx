@@ -13,7 +13,7 @@ import { Button, Forms, showToast } from "@webpack/common";
 
 import { PartialOrNot, PLUGINS_STORE_KEY } from "../shared";
 
-const Native = VencordNative.pluginHelpers.UnofficialPluginInstaller as PluginNative<typeof import("../native")>;
+const Native = VencordNative.pluginHelpers.UnofficialPluginManager as PluginNative<typeof import("../native")>;
 
 export default function PluginItem({
     plugin,

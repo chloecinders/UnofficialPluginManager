@@ -18,7 +18,7 @@ import Header from "./Header";
 import { LoadingOverlay } from "./LoadingOverlay";
 import PluginList from "./PluginList";
 
-const Native = VencordNative.pluginHelpers.UnofficialPluginInstaller as PluginNative<typeof import("../native")>;
+const Native = VencordNative.pluginHelpers.UnofficialPluginManager as PluginNative<typeof import("../native")>;
 
 interface LoadingState {
     isLoading: boolean;
@@ -58,10 +58,10 @@ export default function UnofficialPluginsSection() {
         }
 
         await DataStore.set(PLUGINS_STORE_KEY, [{
-            name: "UnofficialPluginInstaller",
+            name: "UnofficialPluginManager",
             source: "link",
-            repoLink: "https://github.com/surgedevs/UnofficialPluginInstaller",
-            folderName: "UnofficialPluginInstaller"
+            repoLink: "https://github.com/surgedevs/UnofficialPluginManager",
+            folderName: "UnofficialPluginManager"
         }]);
 
         setIsInitialised(true);

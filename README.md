@@ -8,7 +8,7 @@
 > [!WARNING]
 > This plugin is still in its early versions. Some stuff probably does not work correctly yet. Linux and MacOS compatibility is also not guranteed yet.
 
-# UnofficialPluginInstaller
+# UnofficialPluginManager
 
 This is an _Unofficial_ Vencord Plugin that adds an interface to install and manage other unofficial plugins.
 
@@ -49,7 +49,7 @@ You will now be prompted to initialise the plugin.
 This causes the plugin to clone a new copy of the Vencord repository to your user profile folder (home directory on linux/macos, appdata on windows and specifically under the Vencord directory there).
 If anything goes wrong you will be shown an error modal, additional information should be printed to the Discord console.
 
-If the initialisation process is successful, you will be greeted with the Unofficial Plugin Installer UI.
+If the initialisation process is successful, you will be greeted with the Unofficial Plugin Manager UI.
 
 To install a plugin you simply enter the GitHub repository link into the text box and press install.
 You can also copy existing plugin directories using the install from directory action.
