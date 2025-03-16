@@ -127,7 +127,9 @@ export async function initialiseRepo(): Promise<{ code: ErrorCodes; information?
             fs.mkdirSync(userPluginsPath, { recursive: true });
         }
 
-        await execAsync(`cd "${userPluginsPath}" && git clone https://github.com/surgedevs/UnofficialPluginInstaller.git`);
+        await execAsync(`cd "${userPluginsPath}" && git clone https://github.com/surgedevs/UnofficialPluginManager.git`);
+
+        const commitHash = getLatestCommitHash()
 
         workingState = false;
         return { code: ErrorCodes.SUCCESS };

@@ -5,7 +5,7 @@
  */
 
 import { Margins } from "@utils/margins";
-import { Button, Text, TextInput, useState } from "@webpack/common";
+import { Button, showToast, Text, TextInput, useEffect, useState } from "@webpack/common";
 
 function levenshteinDistance(a: string, b: string): number {
     const matrix: number[][] = [];
@@ -46,13 +46,37 @@ const confirmText = "I acknowledge that custom plugins may contain malware and a
 export function AcknowledgementModal({ onConfirm }: { onConfirm: () => void; }) {
     const [input, setInput] = useState("");
 
+    const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === "Enter") {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    };
+
     const onButtonClick = () => {
         const similarity = stringSimilarity(input.trim().toLowerCase(), confirmText.toLowerCase());
 
+        console.log("Text similarity: ", similarity);
+        console.log("Input: ", input.trim().toLowerCase());
+
         if (similarity > 0.8 || input.trim().toLowerCase() === "dev-skip") {
+            document.removeEventListener("keydown", handleKeyDown);
             onConfirm();
+        } else {
+            showToast(
+                "Incorrect text",
+                "failiure"
+            );
         }
     };
+
+    useEffect(() => {
+        document.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }, []);
 
     return (
         <div>
@@ -62,15 +86,16 @@ export function AcknowledgementModal({ onConfirm }: { onConfirm: () => void; }) 
             <TextInput
                 type="text"
                 placeholder="Type in the text above"
-                onChange={e => setInput(e)}
+                onChange={setInput}
                 className={Margins.bottom16}
             />
 
             <Button
-                size={Button.Sizes.SMALL}
+                size={Button.Sizes.MEDIUM}
                 color={Button.Colors.RED}
                 wrapperClassName={Margins.bottom16}
                 onClick={onButtonClick}
+                style={{ width: "100%" }}
             >
                 Confirm
             </Button>

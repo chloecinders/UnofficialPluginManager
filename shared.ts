@@ -26,6 +26,7 @@ export interface PartialPlugin {
 export type StoredPlugin = {
     name: string;
     folderName: string;
+    description?: string;
     source: "link" | "directory";
     repoLink?: string;
     commitHash?: string;

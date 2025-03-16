@@ -50,6 +50,8 @@ export default function PluginItem({
         }
     };
 
+    console.log(plugin);
+
     return <div className="vc-up-container">
         <Forms.FormTitle>
             <Flex flexDirection="row" style={{ alignItems: "center" }}>

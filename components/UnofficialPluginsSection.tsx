@@ -41,7 +41,27 @@ export default function UnofficialPluginsSection() {
         updateLoadingState(false);
     };
 
+    function showModal() {
+        Alerts.show({
+            title: "Attention!",
+            body: <AcknowledgementModal
+                onConfirm={async () => {
+                    setIsAcknowledged(true);
+                    await DataStore.set("vc-unofficialplugins-acknowledged", true);
+                }}
+            />,
+            className: "vc-up-alert"
+        });
+    }
+
     const handleInitialisation = async () => {
+        const acknowledged = await DataStore.get("vc-unofficialplugins-acknowledged");
+
+        if (!acknowledged) {
+            showModal();
+            return;
+        }
+
         updateLoadingState(true, "Initializing...");
 
         const errorCode = await Native.initialiseRepo();
@@ -96,19 +116,13 @@ export default function UnofficialPluginsSection() {
         let mounted = true;
 
         const init = async () => {
-            const acknowledged = await DataStore.get("vc-unofficialplugins-acknowledged");
             if (!mounted) return;
 
-            setIsAcknowledged(!!acknowledged);
+            const acknowledged = await DataStore.get("vc-unofficialplugins-acknowledged");
+            setIsAcknowledged(acknowledged);
+
             if (!acknowledged) {
-                Alerts.show({
-                    title: "Attention!",
-                    body: <AcknowledgementModal onConfirm={async () => {
-                        setIsAcknowledged(true);
-                        await DataStore.set("vc-unofficialplugins-acknowledged", true);
-                    }} />,
-                    className: "vc-up-alert"
-                });
+                return () => { mounted = false; };
             }
 
             const isDownloaded = await Native.isRepoDownloaded();

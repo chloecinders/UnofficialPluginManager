@@ -9,9 +9,9 @@ import { Grid } from "@components/Grid";
 import { PluginNative } from "@utils/types";
 import { useCallback, useEffect, useRef, useState } from "@webpack/common";
 
-import Plugins, { PluginMeta } from "~plugins";
+import Plugins from "~plugins";
 
-import { PartialOrNot, PartialPlugin, PLUGINS_STORE_KEY } from "../shared";
+import { PartialOrNot, PartialPlugin, PLUGINS_STORE_KEY, StoredPlugin } from "../shared";
 import PluginItem from "./PluginItem";
 
 const Native = VencordNative.pluginHelpers.UnofficialPluginManager as PluginNative<typeof import("../native")>;
@@ -47,7 +47,13 @@ export default function PluginList({
             const updatedPlugins = await Promise.all(pluginList.map(async plugin => {
                 if (plugin.source !== "link") return plugin;
 
-                const result = await Native.checkPluginUpdates(plugin.folderName);
+                const data = await DataStore.get(PLUGINS_STORE_KEY);
+
+                if (!data) return plugin;
+
+                const folderName = data.find(p => p.name === plugin.name).folderName || plugin.folderName;
+
+                const result = await Native.checkPluginUpdates(folderName);
 
                 if (!result.success) {
                     console.error(`Failed to check updates for ${plugin.name}:`, result.error);
@@ -92,47 +98,49 @@ export default function PluginList({
                     (result.data ?? []).map(({ pluginName, folderName }) => [pluginName, folderName])
                 );
 
-                const storedPlugins = await DataStore.get(PLUGINS_STORE_KEY) || [];
-                const pluginMetaMap = Object.fromEntries(
-                    storedPlugins.map(plugin => [plugin.name, plugin])
-                );
+                const pluginList: (StoredPlugin | PartialPlugin)[] = [];
+                const storedPlugins: StoredPlugin[] = await DataStore.get(PLUGINS_STORE_KEY) || [];
 
-                const mapPlugin = (p: any, isPartial = false): Plugin => {
-                    const folderName = isPartial ? p.folderName : (
-                        p.name === "UnofficialPluginManager" ? folderMap[p.name] :
-                            PluginMeta[p.name]?.userPlugin ? PluginMeta[p.name].folderName.replace("\\", "/").split("/").pop() :
-                                folderMap[p.name]
-                    );
+                storedPlugins.forEach(plugin => {
+                    pluginList.push({
+                        name: plugin.name,
+                        folderName: plugin.folderName,
+                        source: plugin.source,
+                        repoLink: plugin?.repoLink,
+                        commitHash: plugin?.commitHash
+                    });
+                });
 
-                    return {
-                        ...p,
-                        folderName,
-                        source: pluginMetaMap[p.name]?.source,
-                        repoLink: pluginMetaMap[p.name]?.repoLink,
-                        partial: isPartial,
-                        needsUpdate: false
-                    };
-                };
+                console.log(Plugins);
+
+                Object.values(Plugins).forEach(plugin => {
+                    const existingPlugin: StoredPlugin = pluginList.find(p => p.name === plugin.name) as StoredPlugin;
+
+                    if (existingPlugin) {
+                        existingPlugin.description = plugin.description;
+                    }
+                });
+
+                result?.data?.forEach(plugin => {
+                    const existingPlugin = pluginList.find(p => p.name === plugin.pluginName);
+
+                    if (!existingPlugin) {
+                        pluginList.push({
+                            name: plugin.pluginName,
+                            folderName: plugin.folderName,
+                            source: "directory",
+                            partial: true
+                        } as PartialPlugin);
+                    }
+                });
 
                 if (!mounted) return;
 
-                const partialPluginsMapped = partialPlugins
-                    .filter(p => p.folderName)
-                    .map(p => mapPlugin(p, true));
-
-                const fullPluginsMapped = Object.values(Plugins)
-                    .filter(p => PluginMeta[p.name]?.userPlugin || folderMap[p.name])
-                    .map(p => mapPlugin(p));
-
-                const allPlugins = [...partialPluginsMapped, ...fullPluginsMapped];
-
-                if (!mounted) return;
-
-                setPlugins(allPlugins);
+                setPlugins(pluginList);
 
                 if (isInitialMount.current) {
                     isInitialMount.current = false;
-                    await checkForUpdates(allPlugins);
+                    await checkForUpdates(pluginList);
                 }
             } catch (err) {
                 if (!mounted) return;
