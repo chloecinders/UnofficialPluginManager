@@ -55,13 +55,6 @@ export default function UnofficialPluginsSection() {
     }
 
     const handleInitialisation = async () => {
-        const acknowledged = await DataStore.get("vc-unofficialplugins-acknowledged");
-
-        if (!acknowledged) {
-            showModal();
-            return;
-        }
-
         updateLoadingState(true, "Initializing...");
 
         const errorCode = await Native.initialiseRepo();
@@ -113,34 +106,23 @@ export default function UnofficialPluginsSection() {
     };
 
     useEffect(() => {
-        let mounted = true;
-
-        const init = async () => {
-            if (!mounted) return;
-
+        (async () => {
             const acknowledged = await DataStore.get("vc-unofficialplugins-acknowledged");
             setIsAcknowledged(acknowledged);
 
             if (!acknowledged) {
-                return () => { mounted = false; };
+                showModal();
+                return;
             }
 
-            const isDownloaded = await Native.isRepoDownloaded();
-            if (!mounted) return;
+            const initialised = await Native.isRepoDownloaded();
+            setIsInitialised(initialised);
+        })();
+    }, [isAcknowledged]);
 
-            setIsInitialised(isDownloaded && !(await Native.isWorking()));
-
-            const pluginsResult = await Native.getPartialPlugins();
-            if (!mounted || !pluginsResult.success) return;
-
-            setPlugins(pluginsResult.data?.filter(
-                plugin => !Object.keys(Plugins).includes(plugin.name)
-            ) ?? []);
-        };
-
-        init();
-        return () => { mounted = false; };
-    }, []);
+    if (!isAcknowledged) {
+        return (<></>);
+    }
 
     if (!isInitialised) {
         return (
