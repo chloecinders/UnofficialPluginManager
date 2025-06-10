@@ -174,7 +174,7 @@ export default function UnofficialPluginsSection() {
             <div style={{ position: "relative" }}>
                 {loading.isLoading && <LoadingOverlay text={loading.text} />}
                 <Header
-                    onInstall={plugin => setPlugins([...plugins, plugin])}
+                    onInstall={plugin => setPlugins([...plugins, { ...plugin, partial: true }])}
                     hasUpdates={hasUpdates}
                     onLoadingChange={updateLoadingState}
                     onUpdateAll={refreshPlugins}

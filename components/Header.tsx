@@ -53,7 +53,7 @@ export default function Header({
     };
 
     const handleInstallSuccess = async (result: InstallResult, source: "link" | "directory", repoLink?: string) => {
-        const plugin = {
+        const plugin: PartialPlugin = {
             name: result.data?.name ?? "Unknown",
             folderName: result.data?.folderName ?? "Unknown",
             source,
@@ -79,6 +79,7 @@ export default function Header({
             });
 
             await handleInstallSuccess(result, "link", linkInput);
+            setLinkInput("");
             setLoading(false);
             return;
         }

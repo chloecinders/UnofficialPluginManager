@@ -62,7 +62,7 @@ export function BuildConfirmationModal({ onConfirm }: { onConfirm: (branch: Disc
                 />
             </div>
 
-            <div className={Margins.top16} style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+            <div className={`${Margins.top16} ${Margins.bottom16}`} style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
                 <Button
                     onClick={onCancelClick}
                     look={Button.Looks.LINK}

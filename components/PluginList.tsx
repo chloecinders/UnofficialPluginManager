@@ -129,6 +129,21 @@ export default function PluginList({
                     }
                 });
 
+                partialPlugins.forEach(plugin => {
+                    const existingPlugin = pluginList.find(p => p.name === plugin.name) as PartialPlugin;
+
+                    if (existingPlugin) {
+                        existingPlugin.partial = true;
+                    } else {
+                        pluginList.push({
+                            name: plugin.name,
+                            folderName: plugin.folderName,
+                            source: "directory",
+                            partial: true
+                        } as PartialPlugin);
+                    }
+                });
+
                 if (!mounted) return;
 
                 setPlugins(pluginList);

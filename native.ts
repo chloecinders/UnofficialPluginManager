@@ -328,7 +328,7 @@ export async function installFromRepoLink(_ipcEvent: IpcMainInvokeEvent, repoLin
                 name: pluginName,
                 folderName: repoName,
                 source: "link",
-                commitHash: commitHash ?? undefined
+                commitHash: commitHash ?? undefined,
             }
         };
     } catch (error: any) {
