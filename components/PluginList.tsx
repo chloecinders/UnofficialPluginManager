@@ -94,10 +94,6 @@ export default function PluginList({
 
                 if (!mounted) return;
 
-                const folderMap = Object.fromEntries(
-                    (result.data ?? []).map(({ pluginName, folderName }) => [pluginName, folderName])
-                );
-
                 const pluginList: (StoredPlugin | PartialPlugin)[] = [];
                 const storedPlugins: StoredPlugin[] = await DataStore.get(PLUGINS_STORE_KEY) || [];
 
@@ -111,16 +107,6 @@ export default function PluginList({
                     });
                 });
 
-                console.log(Plugins);
-
-                Object.values(Plugins).forEach(plugin => {
-                    const existingPlugin: StoredPlugin = pluginList.find(p => p.name === plugin.name) as StoredPlugin;
-
-                    if (existingPlugin) {
-                        existingPlugin.description = plugin.description;
-                    }
-                });
-
                 result?.data?.forEach(plugin => {
                     const existingPlugin = pluginList.find(p => p.name === plugin.pluginName);
 
@@ -131,6 +117,15 @@ export default function PluginList({
                             source: "directory",
                             partial: true
                         } as PartialPlugin);
+                    }
+                });
+
+                Object.values(Plugins).forEach(plugin => {
+                    const existingPlugin = pluginList.find(p => p.name === plugin.name) as PartialPlugin;
+
+                    if (existingPlugin) {
+                        delete existingPlugin.partial;
+                        (existingPlugin as StoredPlugin).description = plugin.description;
                     }
                 });
 

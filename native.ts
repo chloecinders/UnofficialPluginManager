@@ -5,7 +5,7 @@
  */
 
 import { exec, ExecException } from "child_process";
-import { dialog, IpcMainInvokeEvent } from "electron";
+import { app, dialog, IpcMainInvokeEvent } from "electron";
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
@@ -46,7 +46,7 @@ const getPluginNameFromPath = (pluginPath: string): string | null => {
 
     try {
         const content = fs.readFileSync(path.join(pluginPath, indexFile), "utf8");
-        const match = content.match(/name:\s*["']([^"']+)["']/);
+        const match = content.match(/(?<=definePlugin[\s\S]*name:\s*["'])(\w*)(?=["'])/);
         return match?.[1] ?? null;
     } catch {
         return null;
@@ -115,10 +115,10 @@ export async function initialiseRepo(): Promise<{ code: ErrorCodes; information?
         const sourceFolder = getSourceFolder();
 
         // Patch runInstaller.mjs
-        const installerPath = path.join(sourceFolder, "scripts", "runInstaller.mjs");
-        let content = fs.readFileSync(installerPath, "utf8");
-        content = content.replace(/execFileSync\(installerBin,\s*{/g, "execFileSync(installerBin, process.argv.slice(3), {");
-        fs.writeFileSync(installerPath, content);
+        // const installerPath = path.join(sourceFolder, "scripts", "runInstaller.mjs");
+        // let content = fs.readFileSync(installerPath, "utf8");
+        // content = content.replace(/execFileSync\(installerBin,\s*{/g, "execFileSync(installerBin, process.argv.slice(3), {");
+        // fs.writeFileSync(installerPath, content);
 
         await execAsync(`cd "${sourceFolder}" && pnpm i --no-frozen-lockfile`);
 
@@ -128,8 +128,6 @@ export async function initialiseRepo(): Promise<{ code: ErrorCodes; information?
         }
 
         await execAsync(`cd "${userPluginsPath}" && git clone https://github.com/surgedevs/UnofficialPluginManager.git`);
-
-        const commitHash = getLatestCommitHash()
 
         workingState = false;
         return { code: ErrorCodes.SUCCESS };
@@ -403,6 +401,9 @@ export async function inject(_ipcEvent: IpcMainInvokeEvent, branch: string): Pro
                 }
             };
         }
+
+        app.relaunch();
+        app.exit();
 
         return { success: true, data: null };
     } catch (error: any) {

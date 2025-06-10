@@ -151,7 +151,7 @@ export default function UnofficialPluginsSection() {
                         The Unofficial Plugin Loader is not yet initialized, click the button below to start.
                         <Forms.FormText type={Forms.FormText.Types.ERROR} className={Margins.top16}>
                             Requires Git and PNPM installed.<br />
-                            Git for windows: https://git-scm.com/download/win
+                            Git for Windows: https://git-scm.com/download/win
                             PNPM: https://pnpm.io/installation
                         </Forms.FormText>
                         <Button

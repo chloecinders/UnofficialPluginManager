@@ -21,6 +21,7 @@ export interface PartialPlugin {
     repoLink?: string;
     commitHash?: string;
     needsUpdate?: boolean;
+    partial?: true;
 }
 
 export type StoredPlugin = {

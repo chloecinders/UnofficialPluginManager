@@ -56,9 +56,6 @@ export function AcknowledgementModal({ onConfirm }: { onConfirm: () => void; }) 
     const onButtonClick = () => {
         const similarity = stringSimilarity(input.trim().toLowerCase(), confirmText.toLowerCase());
 
-        console.log("Text similarity: ", similarity);
-        console.log("Input: ", input.trim().toLowerCase());
-
         if (similarity > 0.8 || input.trim().toLowerCase() === "dev-skip") {
             document.removeEventListener("keydown", handleKeyDown);
             onConfirm();

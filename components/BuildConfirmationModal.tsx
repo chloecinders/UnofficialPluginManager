@@ -45,7 +45,7 @@ export function BuildConfirmationModal({ onConfirm }: { onConfirm: (branch: Disc
     return (
         <div>
             <Text className={Margins.top16}>
-                This will build all plugins and inject them into Discord. Discord will close and must be reopened manually.
+                This will build all plugins and inject them into Discord. If successful, the plugin will restart Discord automatically.
             </Text>
 
             <div className={Margins.top16}>
