@@ -7,10 +7,11 @@
 import { DataStore } from "@api/index";
 import { Grid } from "@components/Grid";
 import { PluginNative } from "@utils/types";
-import { useCallback, useEffect, useRef, useState } from "@webpack/common";
+import { showToast, Toasts, useCallback, useEffect, useRef, useState } from "@webpack/common";
 
 import Plugins from "~plugins";
 
+import { settings } from "..";
 import { PartialOrNot, PartialPlugin, PLUGINS_STORE_KEY, StoredPlugin } from "../shared";
 import PluginItem from "./PluginItem";
 
@@ -40,6 +41,21 @@ export default function PluginList({
     const isInitialMount = useRef(true);
 
     const checkForUpdates = useCallback(async (pluginList: Plugin[]) => {
+        if (settings.store.state.checkedForUpdates) {
+            const updatedPlugins = pluginList.map(plugin => {
+                return {
+                    ...plugin,
+                    commitHash: settings.store.state.latestHashes[plugin.name],
+                    needsUpdate: settings.store.state.needsUpdate[plugin.name],
+                };
+            });
+            setPlugins(updatedPlugins);
+
+            return;
+        }
+
+        settings.store.state.checkedForUpdates = true;
+
         onLoadingChange(true, "Checking for updates...");
         setError(null);
 
@@ -56,9 +72,13 @@ export default function PluginList({
                 const result = await Native.checkPluginUpdates(folderName);
 
                 if (!result.success) {
+                    showToast(`Failed to check updates for ${plugin.name}, see console for more information.`, Toasts.Type.FAILURE);
                     console.error(`Failed to check updates for ${plugin.name}:`, result.error);
                     return plugin;
                 }
+
+                settings.store.state.latestHashes[plugin.name] = result.data?.currentHash || "";
+                settings.store.state.needsUpdate[plugin.name] = result.data?.needsUpdate ?? false;
 
                 return {
                     ...plugin,

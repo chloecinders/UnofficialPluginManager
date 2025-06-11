@@ -10,7 +10,7 @@
 
 # UnofficialPluginManager
 
-This is an _Unofficial_ Vencord Plugin that adds an interface to install and manage other unofficial plugins.
+This is an _Unofficial_ Vencord Plugin that adds an interface to install and manage other unofficial plugins. Unofficial Plugins may also be referred to as "Userplugins" or "Custom plugins".
 
 ![interface](https://github.com/user-attachments/assets/03cf8db2-e602-4a72-9cee-4b3051cdea91)
 

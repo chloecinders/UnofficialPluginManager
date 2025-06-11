@@ -18,12 +18,32 @@
 
 import "./style.css";
 
+import { definePluginSettings } from "@api/Settings";
 import { wrapTab } from "@components/VencordSettings/shared";
 import { Devs } from "@utils/constants";
-import definePlugin, { StartAt } from "@utils/types";
+import definePlugin, { OptionType, StartAt } from "@utils/types";
 import SettingsPlugin from "plugins/_core/settings";
 
 import UnofficialPluginsSection from "./components/UnofficialPluginsSection";
+
+export interface PluginState {
+    checkedForUpdates: boolean;
+    latestHashes: Record<string, string>;
+    needsUpdate: Record<string, boolean>;
+}
+
+// just using this as global state
+export const settings = definePluginSettings({
+    state: {
+        type: OptionType.CUSTOM,
+        default: {
+            checkedForUpdates: false,
+            latestHashes: {},
+            needsUpdate: {}
+        } as PluginState,
+        hidden: true,
+    }
+});
 
 export default definePlugin({
     name: "UnofficialPluginManager",
@@ -31,8 +51,15 @@ export default definePlugin({
     authors: [Devs.surgedevs],
     startAt: StartAt.Init,
     enabledByDefault: true,
+    settings,
 
     start() {
+        settings.store.state = {
+            checkedForUpdates: false,
+            latestHashes: {},
+            needsUpdate: {}
+        };
+
         SettingsPlugin.customSections.push(sectionTypes => ({
             section: "UnofficialPlugins",
             label: "Unofficial Plugins",
