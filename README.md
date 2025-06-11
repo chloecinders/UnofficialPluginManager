@@ -12,7 +12,7 @@
 
 This is an _Unofficial_ Vencord Plugin that adds an interface to install and manage other unofficial plugins. Unofficial Plugins may also be referred to as "Userplugins" or "Custom plugins".
 
-![interface](https://github.com/user-attachments/assets/03cf8db2-e602-4a72-9cee-4b3051cdea91)
+![interface](https://github.com/user-attachments/assets/e61cba29-9c15-4ed0-993a-401a4a56f974)
 
 ## Features
 
