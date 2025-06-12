@@ -73,7 +73,7 @@ export default function UnofficialPluginsSection() {
         await DataStore.set(PLUGINS_STORE_KEY, [{
             name: "UnofficialPluginManager",
             source: "link",
-            repoLink: "https://github.com/surgedevs/UnofficialPluginManager",
+            repoLink: "https://github.com/chloecinders/UnofficialPluginManager",
             folderName: "UnofficialPluginManager"
         }]);
 
